@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+echo "================ start dev @ $(TZ=Asia/Shanghai date) ================"
+echo "Watching for file changes..."
+
+while sleep 0.5
+do
+{
+    find . -type f \( \
+        -name '*.py' -o -name '*.go' \
+    \) | entr -cdnrp bash -c '
+        handle_file_change() {
+            local path=$1 # /path/to/changed/file.ext
+            local foldername=$(dirname $path) # /path/to/changed/
+            local filename=$(basename $path) # file.ext
+            local ext="${filename##*.}" # ext
+            echo "================ start dev @ $(TZ=Asia/Shanghai date) ================"
+            echo "Triggered file: $filename"
+            case $ext in
+                py)
+                    timeout 10s python $path -v || echo "not finished!"
+                    ;;
+                go)
+                    timeout 10s go test -v $foldername || echo "not finished!"
+                    ;;
+                *)
+                    echo "unknown file: $path"
+                    ;;
+            esac
+        }
+        handle_file_change "$0"
+    ' /_
+}
+done

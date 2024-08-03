@@ -1,29 +1,25 @@
-watch-go: ## auto rerun latest changed go file
-	@echo "start!"
-	@./watch-go.sh
+SHELL := /usr/bin/env bash -o errexit -o pipefail -o nounset
 
-watch-py: ## watch for python changes and run
-	@echo "start!"
-	@./watch-py.sh
+TAG := playground
 
-init-py: ## init python dev environment
-	@rm -rf .venv
-	@python -m venv .venv
-	@. .venv/bin/activate
-	@pip install -r requirements.txt
-
-start:
+start: ## (kill existing and) start the playground
 	@$(MAKE) log.info MSG="================ START ================"
+	@docker stop $(TAG) --time 0 || true
+	@docker build -t $(TAG) .
+	@docker run --rm --name=$(TAG) -v $(shell pwd):/play -w /play $(TAG) /play/start
 
-end:
-	@$(MAKE) log.info MSG="================= END ================="
+shell: ## login running container
+	@$(MAKE) log.info MSG="================ LOGIN ================"
+	@docker exec -it -w /play $(TAG) bash
 
-# Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-.PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+# https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
+MAKEFLAGS += --always-make
 
 .DEFAULT_GOAL := help
+# Modified from http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+help:
+	@grep -Eh '^[a-zA-Z_-]+:.*?##? .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?##? "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
 
 # https://github.com/zephinzer/godev/blob/62012ce006df8a3131ee93a74bcec2066405fb60/Makefile#L220
 ## blue logs
