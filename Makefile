@@ -12,6 +12,14 @@ shell: ## login running container
 	@$(MAKE) log.info MSG="================ LOGIN ================"
 	@docker exec -it -w /play $(TAG) bash
 
+py: ## add a python file
+	@$(MAKE) log.info MSG="================ ADD PYTHON FILE ================"
+	@cp python.py $(shell date +%Y_%m%d_%H%M).py
+
+go: ## add a go file
+	@$(MAKE) log.info MSG="================ ADD GO FILE ================"
+	@cp golang_test.go $(shell date +%Y_%m%d_%H%M)_test.go
+
 # https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
 MAKEFLAGS += --always-make
 

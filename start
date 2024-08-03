@@ -8,7 +8,7 @@ do
 {
     find . -type f \( \
         -name '*.py' -o -name '*.go' \
-    \) | entr -cdnrp bash -c '
+    \) | entr -cdnr bash -c '
         handle_file_change() {
             local path=$1 # /path/to/changed/file.ext
             local foldername=$(dirname $path) # /path/to/changed/
@@ -21,7 +21,7 @@ do
                     timeout 10s python $path -v || echo "not finished!"
                     ;;
                 go)
-                    timeout 10s go test -v $foldername || echo "not finished!"
+                    timeout 10s go test -v $path || echo "not finished!"
                     ;;
                 *)
                     echo "unknown file: $path"
