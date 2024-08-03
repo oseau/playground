@@ -6,7 +6,7 @@ start: ## (kill existing and) start the playground
 	@$(MAKE) log.info MSG="================ START ================"
 	@docker stop $(TAG) --time 0 || true
 	@docker build -t $(TAG) .
-	@docker run --rm --name=$(TAG) -v $(shell pwd):/play -w /play $(TAG) /play/start
+	@docker run -it --rm --name=$(TAG) -v $(shell pwd):/play -w /play $(TAG) /play/start
 
 shell: ## login running container
 	@$(MAKE) log.info MSG="================ LOGIN ================"
