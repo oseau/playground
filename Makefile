@@ -1,8 +1,9 @@
 SHELL := /usr/bin/env bash -o errexit -o pipefail -o nounset
 
 TAG := playground
-FILENAME_PY := $(shell date +%Y_%m%d_%H%M).py
-FILENAME_GO := $(shell date +%Y_%m%d_%H%M)_test.go
+TIMESTAMP := $(shell date +%Y_%m%d_%H%M)
+FILENAME_PY := $(TIMESTAMP).py
+FILENAME_GO := $(TIMESTAMP)_test.go
 
 start: ## (kill existing and) start the playground
 	@$(MAKE) log.info MSG="================ START ================"
@@ -17,10 +18,13 @@ shell: ## login running container
 py: ## add a python file
 	@$(MAKE) log.info MSG="================ ADD $(FILENAME_PY) ================"
 	@cp python.py $(FILENAME_PY)
+	@emacsclient -n $(FILENAME_PY)
 
 go: ## add a go file
 	@$(MAKE) log.info MSG="================ ADD $(FILENAME_GO) ================"
 	@cp golang_test.go $(FILENAME_GO)
+	@sed -i '' 's/Hello/Hello$(TIMESTAMP)/g' $(FILENAME_GO)
+	@emacsclient -n $(FILENAME_GO)
 
 # https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
 MAKEFLAGS += --always-make
