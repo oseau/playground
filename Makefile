@@ -15,16 +15,18 @@ shell: ## login running container
 	@$(MAKE) log.info MSG="================ LOGIN ================"
 	@docker exec -it -w /play $(TAG) bash
 
-py: ## add a python file
+py: ## add a python file and `start`
 	@$(MAKE) log.info MSG="================ ADD $(FILENAME_PY) ================"
 	@cp python.py $(FILENAME_PY)
 	@emacsclient -n $(FILENAME_PY)
+	@$(MAKE) start
 
-go: ## add a go file
+go: ## add a go file and `start`
 	@$(MAKE) log.info MSG="================ ADD $(FILENAME_GO) ================"
 	@cp golang_test.go $(FILENAME_GO)
 	@sed -i '' 's/Hello/Hello$(TIMESTAMP)/g' $(FILENAME_GO)
 	@emacsclient -n $(FILENAME_GO)
+	@$(MAKE) start
 
 # https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
 MAKEFLAGS += --always-make
