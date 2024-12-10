@@ -7,7 +7,7 @@ func Hello() string {
 }
 
 func TestHello(t *testing.T) {
-	if "world" != Hello() {
+	if Hello() != "world" {
 		t.Error("should not enter this branch")
 	}
 }
