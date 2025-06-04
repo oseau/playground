@@ -1,5 +1,7 @@
-FROM python:3.12.4-bookworm as py
-FROM golang:1.22.5-bookworm
+ARG IMAGE_PY
+ARG IMAGE_GO
+FROM $IMAGE_PY as py
+FROM $IMAGE_GO
 
 COPY --from=py /usr/local /usr/local
 

@@ -4,11 +4,15 @@ TAG := playground
 TIMESTAMP := $(shell date +%Y_%m%d_%H%M)
 FILENAME_PY := $(TIMESTAMP).py
 FILENAME_GO := $(TIMESTAMP)_test.go
+IMAGE_PY := python:3.12.4-bookworm
+IMAGE_GO := golang:1.22.5-bookworm
 
 start: ## (kill existing and) start the playground
 	@$(MAKE) log.info MSG="================ START ================"
 	@docker stop $(TAG) --time 0 || true
-	@docker build -t $(TAG) .
+	@docker pull $(IMAGE_PY)
+	@docker pull $(IMAGE_GO)
+	@docker build -t $(TAG) --build-arg IMAGE_PY=$(IMAGE_PY) --build-arg IMAGE_GO=$(IMAGE_GO) .
 	@docker run -it --rm --name=$(TAG) -v $(shell pwd):/play -w /play $(TAG) /play/start
 
 shell: ## login running container
